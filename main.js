@@ -17,7 +17,7 @@ function preload ()
 {
     this.load.image("cashier", "assets/cashier.png");
     this.load.image("customer", "assets/customer.png");
-    this.load.image("floor_tile", "assets/floor_tile.png");
+    this.load.image("floor_tile", "assets/tile024.png");
     this.load.image("hcounter", "assets/hcounter.png");
     this.load.image("mcounter", "assets/mcounter.png");
     this.load.image("plant", "assets/plant.png");
@@ -33,7 +33,8 @@ function create ()
     this.add.image(400, 75, "hcounter");
     this.add.image(75, 300, "lvcounter");
     this.add.image(725, 275, "rvcounter");
-    this.add.image(400, 387, "mcounter");
+    this.add.image(400, 385, "mcounter");
+    this.add.image(400, 275, "mcounter");
     this.add.image(75, 75, "plant");
     this.add.image(725, 75, "plant");
     this.add.image(75, 525, "cashier");
