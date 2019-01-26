@@ -45,11 +45,15 @@ function tobuylstfunc(shopname) {
 }
 
 /* creates class Person, with attributes preference and tobuylst. preference is an array of four digits, from 0 - 5. tobuylst is an array from tobuylstfun() */
+
+// Constructing a Person object:
+// Inside of a Scene (likely MenuScene.create()), instantiate as follows:
+// p1 = new Person(this.add.image(X,Y,'IMGNAME').setOrigin(0).setInteractive())
+// This way, the Person object holds a pointer to an image in the scene.
 class Person {
-    constructor() {
-        this.preference = [getRandomInt(6), getRandomInt(6), 
-        getRandomInt(6), getRandomInt(6)];
-        this.tobuylst = tobuylstfunc(cnd);
+    constructor(charimg) {
+        this.preference = [getRandomInt(6), getRandomInt(6), getRandomInt(6), getRandomInt(6)];
+        this.charimg = charimg
     }
 }
 
@@ -64,25 +68,46 @@ class MenuScene extends Phaser.Scene {
     {
         super({
             key: 'MenuScene',
+            active: true,
         });
+    }
+
+    init(){
+        console.log('initing menuscene');
     }
 
     preload ()
     {
         this.load.image('VertMenu', 'assets/VertMenu.png');
-        this.scene.setVisible('MenuScene')
     }
 
     create ()
     {
         let vertmenu = this.add.image(128,128, 'VertMenu' ).setOrigin(0).setInteractive();
         this.input.on('pointerup', () => {
-            console.log(vertmenu)
-            this.scene.start('MainScene')
+            this.scene.pause('MenuScene')
+            this.scene.wake('MainScene')
+            this.scene.bringToTop('MainScene');
+        })
+
+        this.input.keyboard.on('keyup_B', ()=>{
+            this.scene.switch('MenuScene', 'MainScene')
+            this.scene.bringToTop('MainScene');
         })
     }
 
 }
+
+
+class testperson{
+    constructor(gameimg){
+        this.charimg = gameimg
+    }
+    movedown(){
+        this.charimg.y += 50
+    }
+}
+
 
 class MainScene extends Phaser.Scene{
     constructor(){
@@ -100,6 +125,8 @@ class MainScene extends Phaser.Scene{
         this.load.image("plant", "assets/plant.png");
         this.load.image("lvcounter", "assets/lvcounter.png");
         this.load.image("rvcounter", "assets/rvcounter.png");
+
+        this.scene.bringToTop('MainScene')
     }
 
     create ()
@@ -107,15 +134,23 @@ class MainScene extends Phaser.Scene{
         const {width, height} = this.sys.game.config;
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
-        const apple = this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive();
+        // const apple = this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive();
+        var testp = new testperson(this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive());
 
-        apple.on('pointerup', () => {
-            console.log("pooopy")
+        // apple.on('pointerup', () => {
+        //     console.log("pooopy")
 
+        // })
+
+        this.input.keyboard.on('keyup_S', () => {
+            testp.movedown()
         })
 
         this.input.on('pointerup', (pointer) => {
-            this.scene.start('MenuScene')
+            //this.scene.switch('MainScene','MenuScene')
+            this.scene.pause('MainScene')
+            this.scene.wake('MenuScene')
+            this.scene.bringToTop('MenuScene');
         })
         this.add.image(400, 75, "hcounter");
         this.add.image(75, 300, "lvcounter");
