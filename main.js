@@ -1,3 +1,63 @@
+/* getRandomInt produces an integer between [0 - int(max - 1)] */
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+/* creates class Food(name, purchase, sell) where name is a str, purchase and sell are numbers*/
+class Food{
+    constructor(name, purchase, sell) {
+        this.name = name;
+        this.purchase = purchase;
+        this.sell = sell;
+    }
+}
+
+var coffee = new Food('coffee', 1, 1.25)
+var tea = new Food('tea', 0.95, 1.15)
+var donut = new Food('donut', 1.25, 1.75)
+var soup = new Food('soup', 4, 5)
+
+/* creates class Shop*/
+class Shop {
+    constructor(name) {
+        this.name = name;
+        this.lstItems = []
+        this.money = 0;
+    }
+}
+
+var cnd = new Shop('Math CnD')
+cnd.lstItems.push(coffee, tea, donut, soup)
+
+
+/* tobuylstfunc takes in shopname, which is a Shop class. It produces an array of min 1 and max (shopname.lstItems.length) items from shopname.lstItems*/
+function tobuylstfunc(shopname) {
+    var i;
+    var maxnum = getRandomInt(shopname.lstItems.length);
+    if (maxnum==0) {
+        maxnum++
+    }
+    var lst = [];
+    for (i=1; i<=maxnum; i++) {
+        lst.push(shopname.lstItems[getRandomInt(shopname.lstItems.length - 1)]);
+    }
+    return lst
+}
+
+/* creates class Person, with attributes preference and tobuylst. preference is an array of four digits, from 0 - 5. tobuylst is an array from tobuylstfun() */
+class Person {
+    constructor() {
+        this.preference = [getRandomInt(6), getRandomInt(6), 
+        getRandomInt(6), getRandomInt(6)];
+        this.tobuylst = tobuylstfunc(cnd);
+    }
+}
+
+var p1 = new Person();
+
+
+
+
 class MenuScene extends Phaser.Scene {
 
     constructor ()
@@ -48,8 +108,12 @@ class MainScene extends Phaser.Scene{
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
         const apple = this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive();
+
         apple.on('pointerup', () => {
+            console.log("pooopy")
+
         })
+
         this.input.on('pointerup', (pointer) => {
             this.scene.start('MenuScene')
         })
