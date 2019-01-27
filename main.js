@@ -107,20 +107,49 @@ class MenuScene extends Phaser.Scene {
 
 }
 
+var platforms;
+var cursors;
+var path;
+
 
 class testperson extends Phaser.GameObjects.Image{
     constructor(scene, x, y, texture){
         super(scene, x, y, texture)
         this.preference = [getRandomInt(6), getRandomInt(6), getRandomInt(6), getRandomInt(6)];
-        this.tobuylst = tobuylstfunc();
+        this.tobuylst = ['a'];
+        this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
     }
-    movedown(){
-        this.y += 1
+    update(time, delta){
+        this.testperson_SPEED = 1/10000;
+
+    // move the t point along the path, 0 is the start and 0 is the end
+       this.follower.t += testperson_SPEED * delta;
+    
+    // get the new x and y coordinates in vec
+        path.getPoint(this.follower.t, this.follower.vec);
+            
+    // update testperson x and y to the newly obtained x and y
+        this.setPosition(this.follower.vec.x, this.follower.vec.y);
+ 
+    // if we have reached the end of the path, remove the testperson
+        if (this.follower.t >= 1) {
+            this.setActive(false);
+            this.setVisible(false);
+        }
     }
-    update(){
-        this.y += 1
+
+    startOnPath(){
+    // set the t parameter at the start of the path
+        this.follower.t = 0;
+            
+    // get x and y of the given t point            
+        this.path.getPoint(this.follower.t, this.follower.vec);
+            
+    // set the x and y of our enemy to the received from the previous step
+        this.setPosition(this.follower.vec.x, this.follower.vec.y);
     }
 }
+
 
 /* creates class Food(name, purchase, sell) where name is a str, purchase and sell are numbers*/
 class Food extends Phaser.GameObjects.Image {
@@ -132,8 +161,7 @@ class Food extends Phaser.GameObjects.Image {
     }
 }
 
-var platforms;
-var cursors;
+
 
 class MainScene extends Phaser.Scene{
     constructor(){
@@ -198,23 +226,38 @@ class MainScene extends Phaser.Scene{
         player.setCollideWorldBounds(true);*/
 
         this.physics.add.collider(this.player, platforms);
+
+        this.graphics = this.add.graphics();
+
+        this.path = this.add.path(775, 525);
+        this.path.lineTo(550, 525);
+        this.path.lineTo(550, 200);
+        this.path.lineTo(225, 200);
+        this.path.lineTo(225, 575);
+
+        this.graphics.lineStyle(3, 0xffffff, 1);
+        // visualize the path
+        this.path.draw(this.graphics);
+
+        this.enemies = this.add.group({ classType: testperson, runChildUpdate: true });
+        this.nexttestperson = 0;
     }
 
-    update (){
-        if (this.cursors.left.isDown){
-            this.player.setVelocityX(-160);
+    update (time, delta){
+    // if its time for the next testperson
+        if (time > this.nexttestperson) {
+            this.testperson = this.enemies.get();
+            
+            if (this.testperson) {
+                this.testperson.setActive(true);
+                this.testperson.setVisible(true);
+            
+            // place the testperson at the start of the path
+                this.testperson.startOnPath();
+            
+                this.nexttestperson = time + 2000;
+            }
         }
-
-        else if (this.cursors.right.isDown){
-            this.player.setVelocityX(160);
-        }
-        else {
-            this.player.setVelocityX(0);
-        }
-
-        if (this.cursors.up.isDown && this.player.body.touching.down){
-            this.player.setVelocityY(-330);
-        }     
     }
 }
 
