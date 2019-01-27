@@ -27,7 +27,6 @@ function tobuylstfunc(shopname) {
 }
 
 class MenuScene extends Phaser.Scene {
-
     constructor ()
     {
         super({
@@ -115,20 +114,22 @@ class MenuScene extends Phaser.Scene {
 
 }
 
+var platforms;
+var cursors;
+var path;
 
-class testperson extends Phaser.GameObjects.Image{
-    constructor(scene, x, y, texture){
+
+class testperson extends Phaser.Physics.Arcade.Sprite{
+    constructor(scene, path, x, y, texture){
         super(scene, x, y, texture)
         this.preference = [getRandomInt(6), getRandomInt(6), getRandomInt(6), getRandomInt(6)];
-        this.tobuylst = tobuylstfunc();
-    }
-    movedown(){
-        this.y += 1
+        this.tobuylst = ['a'];
+        //this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
     }
     update(){
-        this.y += 1
     }
 }
+
 
 /* creates class Food(name, purchase, sell) where name is a str, purchase and sell are numbers*/
 class Food extends Phaser.GameObjects.Image {
@@ -170,7 +171,6 @@ class MoneyUI extends Phaser.Scene{
 
 
 }
-
 class MainScene extends Phaser.Scene{
     constructor(){
         super('MainScene');
@@ -191,6 +191,8 @@ class MainScene extends Phaser.Scene{
         this.load.image('donut_icon', "assets/donut.png");
         this.load.image('patty_icon', "assets/beef_patty.png");
 
+        this.load.image('char', "assets/customer.png")
+
         this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
         this.scene.bringToTop('MoneyUI')
@@ -205,15 +207,36 @@ class MainScene extends Phaser.Scene{
         this.shop = new Shop("Math CND")
         this.registry.set('shop', this.shop)
 
-        this.add.image(400, 100, "hcounter");
-        this.add.image(75, 325, "lvcounter");
-        this.add.image(725, 300, "rvcounter");
-        this.add.image(400, 410, "mcounter");
-        this.add.image(400, 300, "mcounter");
+        platforms = this.physics.add.staticGroup();
+        platforms.create(400, 100, "hcounter");
+        platforms.create(75, 325, "lvcounter");
+        platforms.create(725, 325, "rvcounter");
+        platforms.create(400, 410, "mcounter");
+        platforms.create(400, 300, "mcounter");
+        platforms.create(75, 550, "cashier");
+        platforms.create(400, 550, "cashier");
         this.add.image(75, 100, "plant");
         this.add.image(725, 100, "plant");
-        this.add.image(75, 550, "cashier");
-        this.add.image(400, 550, "cashier");
+
+
+        this.graphics = this.add.graphics()
+
+        this.path = this.add.path(775,525);
+        this.path.lineTo(550,525)
+        this.path.lineTo(550, 200)
+        this.path.lineTo(225,200)
+        this.path.lineTo(225,575)
+
+        this.graphics.lineStyle(3, 0xffffff, 1);
+        this.path.draw(this.graphics);
+
+        //this.player = this.physics.add.sprite(775, 525, 'char');
+        //this.player = this.add.existing(new testperson(this,this.path,775,525,'char'));
+
+        this.player = this.add.follower(this.path, 775,525,'char');
+
+        this.player.startFollow()
+
 
         this.foods = [
             this.add.existing(new Food(this,75,200,'patty_icon', 'beef patty', 1, 1.25)).setInteractive(),
@@ -240,10 +263,33 @@ class MainScene extends Phaser.Scene{
             })
         })
 
+        this.cursors = this.input.keyboard.createCursorKeys();
     }
 
+        //this.physics.add.collider(this.player, platforms);
+
     update (){
-        
+        // if (this.cursors.left.isDown){
+        //     this.player.setVelocityX(-160);
+        // }
+
+        // else if (this.cursors.right.isDown){
+        //     this.player.setVelocityX(160);
+        // }
+        // else if (this.cursors.up.isDown){
+        //     this.player.setVelocityY(-160);
+        // }
+        // else if (this.cursors.down.isDown){
+        //     this.player.setVelocityY(160);
+        // }
+        // else {
+        //     this.player.setVelocityX(0);
+        //     this.player.setVelocityY(0);
+        // }
+
+        // if (this.cursors.up.isDown && this.player.body.touching.down){
+        //     this.player.setVelocityY(-330);
+        // }     
     }
 }
 
@@ -251,6 +297,13 @@ var config = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 300 },
+            debug: false
+        }
+    },
     backgroundColor: "#222222",
     parent:"game-continer",
     scene: [MainScene, MenuScene, MoneyUI]
