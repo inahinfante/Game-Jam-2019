@@ -204,6 +204,8 @@ class MainScene extends Phaser.Scene{
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
 
+        this.timetick = 0
+
         this.shop = new Shop("Math CND")
         this.registry.set('shop', this.shop)
 
@@ -218,25 +220,18 @@ class MainScene extends Phaser.Scene{
         this.add.image(75, 100, "plant");
         this.add.image(725, 100, "plant");
 
-
         this.graphics = this.add.graphics()
 
         this.path = this.add.path(775,525);
         this.path.lineTo(550,525)
         this.path.lineTo(550, 200)
         this.path.lineTo(225,200)
-        this.path.lineTo(225,575)
+        this.path.lineTo(225,550)
 
         this.graphics.lineStyle(3, 0xffffff, 1);
         this.path.draw(this.graphics);
 
-        //this.player = this.physics.add.sprite(775, 525, 'char');
-        //this.player = this.add.existing(new testperson(this,this.path,775,525,'char'));
-
-        this.player = this.add.follower(this.path, 775,525,'char');
-
-        this.player.startFollow()
-
+        this.customers = []
 
         this.foods = [
             this.add.existing(new Food(this,75,200,'patty_icon', 'beef patty', 1, 1.25)).setInteractive(),
@@ -264,32 +259,44 @@ class MainScene extends Phaser.Scene{
         })
 
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.customergroup = this.physics.add.group({
+            key: 'customers'
+        })
+
+        this.physics.add.collider(this.customergroup, this.customergroup, (obj1,obj2) => {
+            //console.log("collision between", obj1, obj2)
+            obj1.pauseFollow()
+            obj2.pauseFollow()
+        })
+
+        // Add a timer event, the call back is called every `delay` ms
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                var rando = Math.random()
+                if (rando < 0.3){
+                    this.time.addEvent({
+                        delay:9000,
+                        callback:() => {
+                            this.customers[0].destroy()
+
+                            this.customers.shift()
+                            this.customers.forEach((custo)=>{
+                                custo.resumeFollow()
+                            })}
+                    })
+                    var newfollower = this.add.follower(this.path, 775,525,'char').startFollow({duration:7000})
+                    this.customers.push(newfollower)
+                    this.physics.world.enable(this.customers[this.customers.length - 1])
+                    this.customergroup.add(this.customers[this.customers.length - 1])
+                }},
+            callbackScope: this,
+            loop: true
+        })
     }
 
-        //this.physics.add.collider(this.player, platforms);
-
-    update (){
-        // if (this.cursors.left.isDown){
-        //     this.player.setVelocityX(-160);
-        // }
-
-        // else if (this.cursors.right.isDown){
-        //     this.player.setVelocityX(160);
-        // }
-        // else if (this.cursors.up.isDown){
-        //     this.player.setVelocityY(-160);
-        // }
-        // else if (this.cursors.down.isDown){
-        //     this.player.setVelocityY(160);
-        // }
-        // else {
-        //     this.player.setVelocityX(0);
-        //     this.player.setVelocityY(0);
-        // }
-
-        // if (this.cursors.up.isDown && this.player.body.touching.down){
-        //     this.player.setVelocityY(-330);
-        // }     
+    update (time,delta){
     }
 }
 
@@ -300,8 +307,8 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 },
-            debug: false
+            gravity: { y: 0 },
+            debug: true
         }
     },
     backgroundColor: "#222222",
