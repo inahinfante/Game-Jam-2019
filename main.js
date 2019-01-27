@@ -79,16 +79,30 @@ class MenuScene extends Phaser.Scene {
         var itemName = this.FoodObj.name;
         var purchprice = this.FoodObj.purchase;
         var sellprice = this.FoodObj.sell;
-        var stockamnt = '10';
+        var stockamnt = 10;
         var buymore = 'derp';
 
         this.add.text(250, 200, itemName, {fontSize:'35px', fill:'#000000'})
         
-        this.add.text(475, 250, purchprice, {fontSize:'25px', fill:'#000000'})
-        this.add.text(425, 300, sellprice, {fontSize:'25px', fill:'#000000'})
+        this.add.text(350, 250, "Buy Price: ", {fontSize:'25px', fill:'#000000'}).setAlign('right')
+        this.add.text(475, 250, purchprice, {fontSize:'25px', fill:'#000000'}).setAlign('right')
 
-        this.add.text(400, 375, '12', {fontSize:'25px', fill:'#000000'})
-        this.add.text(400, 425, 'Yes (+1)', {fontSize:'25px', fill:'#000000'})
+        this.add.text(350, 300, "Sell Price: ", {fontSize:'25px', fill:'#000000'}).setAlign('right')
+        this.add.text(475, 300, sellprice, {fontSize:'25px', fill:'#000000'}).setAlign('right')
+
+        this.add.text(350, 350, "Stock: ", {fontSize:'25px', fill:'#000000'}).setAlign('right')
+        this.stockview = this.add.text(475, 350, stockamnt, {fontSize:'25px', fill:'#000000'}).setAlign('right')
+
+        this.add.text(350, 400, "Buy more? ", {fontSize:'25px', fill:'#000000'}).setAlign('right')
+        var buybutt = this.add.text(475, 400, 'Yes (+1)', {fontSize:'25px', fill:'#000000'})
+        buybutt.setAlign('right').setInteractive().setBackgroundColor('green')
+
+
+        buybutt.on('pointerup', () => {
+            stockamnt += 1
+            this.stockview.destroy()
+            this.stockview = this.add.text(475, 350, stockamnt, {fontSize:'25px', fill:'#000000'}).setAlign('right')
+        })
     }
 
 }
