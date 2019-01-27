@@ -17,6 +17,7 @@ var coffee = new Food('coffee', 1, 1.25)
 var tea = new Food('tea', 0.95, 1.15)
 var donut = new Food('donut', 1.25, 1.75)
 var soup = new Food('soup', 4, 5)
+var apple = new Food('apple', 0.65, 0.75)
 
 /* creates class Shop*/
 class Shop {
@@ -28,7 +29,7 @@ class Shop {
 }
 
 var cnd = new Shop('Math CnD')
-cnd.lstItems.push(coffee, tea, donut, soup)
+cnd.lstItems.push(coffee, tea, donut, soup, apple)
 
 
 /* tobuylstfunc takes in shopname, which is a Shop class. It produces an array of min 1 and max (shopname.lstItems.length) items from shopname.lstItems*/
