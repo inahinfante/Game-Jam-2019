@@ -99,12 +99,15 @@ class MenuScene extends Phaser.Scene {
 }
 
 
-class testperson{
-    constructor(gameimg){
-        this.charimg = gameimg
+class testperson extends Phaser.GameObjects.Image{
+    constructor(scene, x, y, texture){
+        super(scene, x, y, texture)
     }
     movedown(){
-        this.charimg.y += 50
+        this.y += 1
+    }
+    update(){
+        this.y += 1
     }
 }
 
@@ -126,6 +129,7 @@ class MainScene extends Phaser.Scene{
         this.load.image("lvcounter", "assets/lvcounter.png");
         this.load.image("rvcounter", "assets/rvcounter.png");
 
+        this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
     }
 
@@ -135,7 +139,13 @@ class MainScene extends Phaser.Scene{
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
         // const apple = this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive();
-        var testp = new testperson(this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive());
+        //var testp = new testperson(this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive());
+        // pass in `this`, which is the scene object.
+        // testp = new testperson(this,0,0,'apple_icon').setOrigin(0).setInteractive();
+        // this.testp = this.add.existing(testp);
+        this.testp = this.add.existing(new testperson(this,0,0,'apple_icon').setOrigin(0).setInteractive());
+        
+        //this.add.existing(testp);
 
         // apple.on('pointerup', () => {
         //     console.log("pooopy")
@@ -166,6 +176,8 @@ class MainScene extends Phaser.Scene{
 
     update ()
     {
+        this.testp.movedown()
+        
     }
 }
 
