@@ -108,17 +108,26 @@ class MenuScene extends Phaser.Scene {
 }
 
 
-class testperson extends Phaser.GameObjects.Image{
-    constructor(scene, x, y, texture){
+class testperson extends Phaser.Physics.Arcade.Sprite{
+    constructor(scene, path, x, y, texture){
         super(scene, x, y, texture)
         this.preference = [getRandomInt(6), getRandomInt(6), getRandomInt(6), getRandomInt(6)];
-        this.tobuylst = tobuylstfunc();
+        //this.tobuylst = tobuylstfunc();
+        this.path = path;
+        this.pathIndex = 0;
+        this.pathSpeed = 0.5;
+        this.pathVector = new Phaser.Math.Vector2();
+
+        this.path.getPoint(0,this.pathVector);
+        this.setPosition(this.pathVector.x, this.pathVector.y);
     }
-    movedown(){
-        this.y += 1
-    }
-    update(){
-        this.y += 1
+
+    preUpdate(time, delta){
+        //this.anims.update(time,delta)
+        this.path.getPoint(this.pathIndex, this.pathVector);
+        this.setPosition(this.pathVector.x, this.pathVector.y);
+        this.pathIndex = Phaser.Math.Wrap(this.pathIndex + this.pathSpeed, 0, 1);
+
     }
 }
 
@@ -171,6 +180,30 @@ class MainScene extends Phaser.Scene{
         platforms.create(75, 550, "cashier");
         platforms.create(400, 550, "cashier");
 
+
+        this.graphics = this.add.graphics()
+
+        this.path = this.add.path(775,525);
+        this.path.lineTo(550,525)
+        this.path.lineTo(550, 200)
+        this.path.lineTo(225,200)
+        this.path.lineTo(225,575)
+
+        this.graphics.lineStyle(3, 0xffffff, 1);
+        this.path.draw(this.graphics);
+
+        //this.player = this.physics.add.sprite(775, 525, 'char');
+        //this.player = this.add.existing(new testperson(this,this.path,775,525,'char'));
+
+        this.player = this.add.follower(this.path, 775,525,'char');
+
+        this.player.startFollow()
+
+
+        console.log("creating main", this)
+
+
+
         this.add.image(75, 100, "plant");
         this.add.image(725, 100, "plant");
         this.add.image(75, 20, "coin");
@@ -190,8 +223,13 @@ class MainScene extends Phaser.Scene{
             this.scene.bringToTop('MenuScene');
         })
 
-        this.player = this.physics.add.sprite(775, 525, 'char');
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.input.keyboard.on('keyup_A', () => {
+            console.log('a pressed')
+            this.player.setVelocityX(-50)
+        })
+
 
         /* bounce is not needed and players need to leave the world later*/
         /*player.setBounce(0);
@@ -201,20 +239,27 @@ class MainScene extends Phaser.Scene{
     }
 
     update (){
-        if (this.cursors.left.isDown){
-            this.player.setVelocityX(-160);
-        }
+        // if (this.cursors.left.isDown){
+        //     this.player.setVelocityX(-160);
+        // }
 
-        else if (this.cursors.right.isDown){
-            this.player.setVelocityX(160);
-        }
-        else {
-            this.player.setVelocityX(0);
-        }
+        // else if (this.cursors.right.isDown){
+        //     this.player.setVelocityX(160);
+        // }
+        // else if (this.cursors.up.isDown){
+        //     this.player.setVelocityY(-160);
+        // }
+        // else if (this.cursors.down.isDown){
+        //     this.player.setVelocityY(160);
+        // }
+        // else {
+        //     this.player.setVelocityX(0);
+        //     this.player.setVelocityY(0);
+        // }
 
-        if (this.cursors.up.isDown && this.player.body.touching.down){
-            this.player.setVelocityY(-330);
-        }     
+        // if (this.cursors.up.isDown && this.player.body.touching.down){
+        //     this.player.setVelocityY(-330);
+        // }     
     }
 }
 
