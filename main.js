@@ -147,8 +147,12 @@ class MainScene extends Phaser.Scene{
         this.load.image("plant", "assets/plant.png");
         this.load.image("lvcounter", "assets/lvcounter.png");
         this.load.image("rvcounter", "assets/rvcounter.png");
-        this.load.image('apple_icon', "assets/food.png");
         this.load.image('coin', "assets/coin.png");
+
+        this.load.image('apple_icon', "assets/apple.png");
+        this.load.image('coffee_icon', "assets/coffee.png");
+        this.load.image('donut_icon', "assets/donut.png");
+        this.load.image('patty_icon', "assets/beef_patty.png");
 
         this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
@@ -172,18 +176,27 @@ class MainScene extends Phaser.Scene{
         this.add.image(75, 20, "coin")
         this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
 
-        this.apple = this.add.existing(new Food(this,75,250,'apple_icon', 'apple', 1, 1.25)).setInteractive();
-
-        this.apple.on('pointerup', () => {
-            this.scene.pause('MainScene')
-            this.scene.launch('MenuScene',this.apple)
-            this.scene.bringToTop('MenuScene');
-        })
+        this.foods = [
+            this.add.existing(new Food(this,75,200,'patty_icon', 'beef patty', 1, 1.25)).setInteractive(),
+            this.add.existing(new Food(this,75,250,'apple_icon', 'apple', 1, 1.25)).setInteractive(),
+            this.add.existing(new Food(this,75,300,'coffee_icon', 'coffee', 1, 1.25)).setInteractive(),
+            this.add.existing(new Food(this,75,350,'donut_icon', 'donut', 1, 1.25)).setInteractive(),
+            this.add.existing(new Food(this,75,400,'apple_icon', 'organic apple', 1, 10)).setInteractive(),
+        ]
 
         this.input.on('pointerup', (pointer) => {
-            this.scene.pause('MainScene')
-            this.scene.wake('MenuScene')
-            this.scene.bringToTop('MenuScene');
+            // Check if any of the foods were clicked
+
+            // forEach doesn't lose scope of the enumerator
+            // like a for (i = 0 .....) loop would
+            this.foods.forEach( (foodie) => {
+                foodie.on('pointerup', () => {
+                    console.log(foodie)
+                    this.scene.pause('MainScene')
+                    this.scene.launch('MenuScene', foodie)
+                    this.scene.bringToTop('MenuScene')
+                })
+            })
         })
 
     }
