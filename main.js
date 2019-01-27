@@ -36,7 +36,7 @@ class MenuScene extends Phaser.Scene {
 
     init(data){
         this.FoodObj = data.input.gameObject
-        console.log('menu init, gameObj is ', this.FoodObj)
+        //console.log('menu init, gameObj is ', this.FoodObj)
     }
 
     preload ()
@@ -59,9 +59,9 @@ class MenuScene extends Phaser.Scene {
             this.scene.bringToTop('MoneyUI');
         })
         
-        console.log('in create in menu')
+        //console.log('in create in menu')
         this.input.on('pointerup', () => {
-            console.log(data)
+            //console.log(data)
         })
 
         // Make new image using FoodObj texture key
@@ -151,7 +151,7 @@ class MoneyUI extends Phaser.Scene{
 
     preload(){
         this.load.image('coin', "assets/coin.png");
-        console.log('preloading moneyui')
+        //console.log('preloading moneyui')
     }
 
     create(){
@@ -250,6 +250,7 @@ class MainScene extends Phaser.Scene{
         //this.path.draw(this.graphics);
 
         this.customers = []
+        this.customerlist = []
 
         var music = this.sound.add('bgmusic', {loop:true});
 
@@ -278,7 +279,7 @@ class MainScene extends Phaser.Scene{
             // like a for (i = 0 .....) loop would
             this.foods.forEach( (foodie) => {
                 foodie.on('pointerup', () => {
-                    console.log(foodie)
+                    //console.log(foodie)
                     this.scene.pause('MainScene')
                     this.scene.launch('MenuScene', foodie)
                     this.scene.bringToTop('MenuScene')
@@ -304,14 +305,23 @@ class MainScene extends Phaser.Scene{
             callback: () => {
                 var rando = Math.random()
                 if (rando < 0.3){
-                    console.log("this.time", this.time.now)
+                    //console.log("this.time", this.time.now)
                     if (this.time.now - this.lastspawntime > 2000){
                         this.lastspawntime = this.time.now
                         this.time.addEvent({
                             delay:12000,
                             callback:() => {
+                                // take out foods in list
+                                for (var i = 0; i < 4; i++){
+                                    var randint = getRandomInt(8)
+                                    this.foods[randint].stock -= 1
+                                    this.shop.money += this.foods[randint].sell
+                                    this.registry.set('shop', this.shop)
+                                }
+
                                 this.customers[0].destroy()
 
+                                this.customerlist.shift()
                                 this.customers.shift()
                                 this.customers.forEach((custo)=>{
                                     custo.resumeFollow()
@@ -319,6 +329,7 @@ class MainScene extends Phaser.Scene{
                         })
                         var newfollower = this.add.follower(this.path, 775,525,'char').startFollow({duration:7000}).play('walking')
                         this.customers.push(newfollower)
+                        this.customerlist.push([getRandomInt(9), getRandomInt(9), getRandomInt(9)])
                         this.physics.world.enable(this.customers[this.customers.length - 1])
                         this.customergroup.add(this.customers[this.customers.length - 1])
                     }
