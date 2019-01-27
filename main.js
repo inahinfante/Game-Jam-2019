@@ -27,7 +27,6 @@ function tobuylstfunc(shopname) {
 }
 
 class MenuScene extends Phaser.Scene {
-
     constructor ()
     {
         super({
@@ -107,29 +106,22 @@ class MenuScene extends Phaser.Scene {
 
 }
 
+var platforms;
+var cursors;
+var path;
+
 
 class testperson extends Phaser.Physics.Arcade.Sprite{
     constructor(scene, path, x, y, texture){
         super(scene, x, y, texture)
         this.preference = [getRandomInt(6), getRandomInt(6), getRandomInt(6), getRandomInt(6)];
-        //this.tobuylst = tobuylstfunc();
-        this.path = path;
-        this.pathIndex = 0;
-        this.pathSpeed = 0.5;
-        this.pathVector = new Phaser.Math.Vector2();
-
-        this.path.getPoint(0,this.pathVector);
-        this.setPosition(this.pathVector.x, this.pathVector.y);
+        this.tobuylst = ['a'];
+        //this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
     }
-
-    preUpdate(time, delta){
-        //this.anims.update(time,delta)
-        this.path.getPoint(this.pathIndex, this.pathVector);
-        this.setPosition(this.pathVector.x, this.pathVector.y);
-        this.pathIndex = Phaser.Math.Wrap(this.pathIndex + this.pathSpeed, 0, 1);
-
+    update(){
     }
 }
+
 
 /* creates class Food(name, purchase, sell) where name is a str, purchase and sell are numbers*/
 class Food extends Phaser.GameObjects.Image {
@@ -141,14 +133,12 @@ class Food extends Phaser.GameObjects.Image {
     }
 }
 
-var platforms;
-var cursors;
-
 class MainScene extends Phaser.Scene{
     constructor(){
         super('MainScene');
     }
     preload (){
+        this.load.image("repeating-background", "assets/floor_tile.png");
         this.load.image("cashier", "assets/cashier.png");
         this.load.image("customer", "assets/customer.png");
         this.load.image("floor_tile", "assets/tile024.png");
@@ -159,14 +149,15 @@ class MainScene extends Phaser.Scene{
         this.load.image("rvcounter", "assets/rvcounter.png");
         this.load.image('apple_icon', "assets/food.png");
         this.load.image('coin', "assets/coin.png");
-        this.load.image('char', 'assets/customer.png');
+
+        this.load.image('char', "assets/customer.png")
 
         this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
     }
 
-
-    create (){
+    create ()
+    {
         const {width, height} = this.sys.game.config;
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
@@ -199,14 +190,9 @@ class MainScene extends Phaser.Scene{
 
         this.player.startFollow()
 
-
-        console.log("creating main", this)
-
-
-
         this.add.image(75, 100, "plant");
         this.add.image(725, 100, "plant");
-        this.add.image(75, 20, "coin");
+        this.add.image(75, 20, "coin")
         this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
 
         this.apple = this.add.existing(new Food(this,75,250,'apple_icon', 'apple', 1, 1.25)).setInteractive();
@@ -224,19 +210,9 @@ class MainScene extends Phaser.Scene{
         })
 
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        this.input.keyboard.on('keyup_A', () => {
-            console.log('a pressed')
-            this.player.setVelocityX(-50)
-        })
-
-
-        /* bounce is not needed and players need to leave the world later*/
-        /*player.setBounce(0);
-        player.setCollideWorldBounds(true);*/
-
-        this.physics.add.collider(this.player, platforms);
     }
+
+        //this.physics.add.collider(this.player, platforms);
 
     update (){
         // if (this.cursors.left.isDown){
@@ -270,12 +246,15 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            gravity: { y: 300 },
+            debug: false
         }
     },
     backgroundColor: "#222222",
     parent:"game-continer",
     scene: [MainScene, MenuScene]
+
+
 };
 
 var game = new Phaser.Game(config);
