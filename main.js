@@ -100,8 +100,7 @@ class MenuScene extends Phaser.Scene {
 
         buybutt.on('pointerup', () => {
             stockamnt += 1
-            this.stockview.destroy()
-            this.stockview = this.add.text(475, 350, stockamnt, {fontSize:'25px', fill:'#000000'}).setAlign('right')
+            this.stockview.setText(stockamnt);
         })
     }
 
