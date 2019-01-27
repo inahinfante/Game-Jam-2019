@@ -1,4 +1,3 @@
-
 /* getRandomInt produces an integer between [0 - int(max - 1)] */
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
