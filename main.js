@@ -4,19 +4,6 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-/* creates class Food(name, purchase, sell) where name is a str, purchase and sell are numbers*/
-class Food{
-    constructor(name, purchase, sell) {
-        this.name = name;
-        this.purchase = purchase;
-        this.sell = sell;
-    }
-}
-
-var coffee = new Food('coffee', 1, 1.25)
-var tea = new Food('tea', 0.95, 1.15)
-var donut = new Food('donut', 1.25, 1.75)
-var soup = new Food('soup', 4, 5)
 
 /* creates class Shop*/
 class Shop {
@@ -27,8 +14,8 @@ class Shop {
     }
 }
 
-var cnd = new Shop('Math CnD')
-cnd.lstItems.push(coffee, tea, donut, soup)
+// var cnd = new Shop('Math CnD')
+// cnd.lstItems.push(coffee, tea, donut, soup)
 
 
 /* tobuylstfunc takes in shopname, which is a Shop class. It produces an array of min 1 and max (shopname.lstItems.length) items from shopname.lstItems*/
@@ -66,36 +53,41 @@ class MenuScene extends Phaser.Scene {
     {
         super({
             key: 'MenuScene',
-            active: true,
+            //active: true,
         });
     }
 
-    init(){
-        console.log('initing menuscene');
+    init(data){
+        this.FoodObj = data.input.gameObject
+        console.log('menu init, gameObj is ', this.FoodObj)
     }
 
     preload ()
     {
         this.load.image('NBlueMenu', 'assets/NBlueMenu.png');
         this.load.image('coin', "assets/coin.png");
-        
 
         this.scene.setVisible('MenuScene')
         this.scene.setVisible('coin')
     }
 
-    create ()
+    create (data)
     {
+        console.log('in create in menu')
         this.add.image(75, 20, "coin")
         let vertmenu = this.add.image(200, 125, 'NBlueMenu').setOrigin(0).setInteractive();
         this.input.on('pointerup', () => {
-            this.scene.pause('MenuScene')
-            this.scene.wake('MainScene')
-            this.scene.bringToTop('MainScene');
+            console.log(data)
         })
 
-        this.input.keyboard.on('keyup_B', ()=>{
-            this.scene.switch('MenuScene', 'MainScene')
+        // Make new image using FoodObj texture key
+        this.add.image(400,300,this.FoodObj.texture.key);
+
+        this.add.text(400, 200, "press q to exit menu");
+
+        this.input.keyboard.on('keyup_Q', ()=>{
+            this.scene.pause('MenuScene')
+            this.scene.wake('MainScene')
             this.scene.bringToTop('MainScene');
         })
     }
@@ -115,6 +107,20 @@ class testperson extends Phaser.GameObjects.Image{
     }
 }
 
+/* creates class Food(name, purchase, sell) where name is a str, purchase and sell are numbers*/
+class Food extends Phaser.GameObjects.Image {
+    constructor(scene, x, y, texture, name, purchase, sell) {
+        super(scene, x, y, texture)
+        this.name = name;
+        this.purchase = purchase;
+        this.sell = sell;
+    }
+}
+
+// var coffee = new Food('coffee', 1, 1.25)
+// var tea = new Food('tea', 0.95, 1.15)
+// var donut = new Food('donut', 1.25, 1.75)
+// var soup = new Food('soup', 4, 5)
 
 class MainScene extends Phaser.Scene{
     constructor(){
@@ -154,9 +160,15 @@ class MainScene extends Phaser.Scene{
         this.add.image(75, 550, "cashier");
         this.add.image(400, 550, "cashier");
 
-        const apple = this.add.image(75,250,'apple_icon').setInteractive();
+        // const apple = this.add.image(75,250,'apple_icon').setInteractive();
 
-        apple.on('pointerup', () => {})
+        this.apple = this.add.existing(new Food(this,75,250,'apple_icon')).setInteractive();
+
+        this.apple.on('pointerup', () => {
+            this.scene.pause('MainScene')
+            this.scene.launch('MenuScene',this.apple)
+            this.scene.bringToTop('MenuScene');
+        })
         // const apple = this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive();
         //var testp = new testperson(this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive());
         // pass in `this`, which is the scene object.
