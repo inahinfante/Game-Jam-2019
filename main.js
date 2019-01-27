@@ -238,12 +238,14 @@ class MainScene extends Phaser.Scene{
         this.anims.create({
             key: 'walking',
             frames: [
-                { key: 'walk1'},
-                { key: 'walk2'},
+                { key: 'walk1', duration:50},
+                { key: 'walk2', duration:50},
             ],
             frameRate: 4,
             repeat: -1
         })
+
+
 
         //this.graphics.lineStyle(3, 0xffffff, 1);
         //this.path.draw(this.graphics);
@@ -313,7 +315,7 @@ class MainScene extends Phaser.Scene{
                                 custo.resumeFollow()
                             })}
                     })
-                    var newfollower = this.add.follower(this.path, 775,525,'char').startFollow({duration:7000})
+                    var newfollower = this.add.follower(this.path, 775,525,'char').startFollow({duration:7000}).play('walking')
                     this.customers.push(newfollower)
                     this.physics.world.enable(this.customers[this.customers.length - 1])
                     this.customergroup.add(this.customers[this.customers.length - 1])
@@ -321,6 +323,8 @@ class MainScene extends Phaser.Scene{
             callbackScope: this,
             loop: true
         })
+
+        //this.char.play('walking');
     }
 
     update (time,delta){
