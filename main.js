@@ -4,7 +4,8 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-/* creates class Food(name, purchase, sell) where name is a str, purchase and sell are numbers*/
+/* creates class Food(name, purchase, sell) where name is a str, 
+purchase and sell are numbers*/
 class Food{
     constructor(name, purchase, sell) {
         this.name = name;
@@ -32,7 +33,9 @@ var cnd = new Shop('Math CnD')
 cnd.lstItems.push(coffee, tea, donut, soup, apple)
 
 
-/* tobuylstfunc takes in shopname, which is a Shop class. It produces an array of min 1 and max (shopname.lstItems.length) items from shopname.lstItems*/
+/* tobuylstfunc takes in shopname, which is a Shop class. 
+It produces an array of min 1 and max (shopname.lstItems.length) 
+items from shopname.lstItems*/
 function tobuylstfunc(shopname) {
     var i;
     var maxnum = getRandomInt(shopname.lstItems.length);
@@ -46,7 +49,9 @@ function tobuylstfunc(shopname) {
     return lst
 }
 
-/* creates class Person, with attributes preference and tobuylst. preference is an array of four digits, from 0 - 5. tobuylst is an array from tobuylstfun() */
+/* creates class Person, with attributes preference and tobuylst. 
+preference is an array of four digits, from 0 - 5. 
+tobuylst is an array from tobuylstfun() */
 
 // Constructing a Person object:
 // Inside of a Scene (likely MenuScene.create()), instantiate as follows:
@@ -78,17 +83,24 @@ class MenuScene extends Phaser.Scene {
     preload ()
     {
         this.load.image('NBlueMenu', 'assets/NBlueMenu.png');
-        this.load.image('coin', "assets/coin.png");
-        
-
         this.scene.setVisible('MenuScene')
-        this.scene.setVisible('coin')
+
+        this.load.image('exitbutton', 'assets/redboxCross.png');
+        this.scene.setVisible('exitbutton')
+
+        /* placeholders */
+        this.load.image('test', 'assets/test.png');
+        this.scene.setVisible('test')
     }
 
     create ()
     {
-        this.add.image(75, 20, "coin")
-        let vertmenu = this.add.image(200, 125, 'NBlueMenu').setOrigin(0).setInteractive();
+        this.add.image(200, 125, 'NBlueMenu').setOrigin(0).setInteractive();
+        this.add.image(575, 110, 'exitbutton').setOrigin(0).setInteractive();
+        
+        /* placeholders */
+        this.add.image(400, 300, 'test')
+        
         this.input.on('pointerup', () => {
             this.scene.pause('MenuScene')
             this.scene.wake('MainScene')
@@ -99,6 +111,21 @@ class MenuScene extends Phaser.Scene {
             this.scene.switch('MenuScene', 'MainScene')
             this.scene.bringToTop('MainScene');
         })
+
+        /* placeholders */
+        var itemName = apple.name;
+        var purchprice = apple.purchase;
+        var sellprice = apple.sell;
+        var stockamnt = '10';
+        var buymore = 'derp';
+
+        this.add.text(250, 200, itemName, {fontSize:'35px', fill:'#000000'})
+        
+        this.add.text(475, 250, purchprice, {fontSize:'25px', fill:'#000000'})
+        this.add.text(425, 300, sellprice, {fontSize:'25px', fill:'#000000'})
+
+        this.add.text(400, 350, '12', {fontSize:'25px', fill:'#000000'})
+        this.add.text(400, 400, 'Yes (+ 1)', {fontSize:'25px', fill:'#000000'})
     }
 
 }
@@ -154,6 +181,8 @@ class MainScene extends Phaser.Scene{
         this.add.image(725, 100, "plant");
         this.add.image(75, 550, "cashier");
         this.add.image(400, 550, "cashier");
+        this.add.image(75, 20, "coin")
+        this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
 
         const apple = this.add.image(75,250,'apple_icon').setInteractive();
 
@@ -185,8 +214,6 @@ class MainScene extends Phaser.Scene{
             this.scene.bringToTop('MenuScene');
         })
 
-        this.add.image(75, 20, "coin")
-
     }
 
     update (){
@@ -204,4 +231,3 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
-
