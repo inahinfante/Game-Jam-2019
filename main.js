@@ -119,11 +119,10 @@ var cursors;
 var path;
 
 
-class testperson extends Phaser.Physics.Arcade.Sprite{
+class Person extends Phaser.GameObjects.PathFollower{
     constructor(scene, path, x, y, texture){
         super(scene, x, y, texture)
-        this.preference = [getRandomInt(6), getRandomInt(6), getRandomInt(6), getRandomInt(6)];
-        this.tobuylst = ['a'];
+        this.toBuy = [getRandomInt(9), getRandomInt(9), getRandomInt(9), getRandomInt(9)];
         //this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
     }
     update(){
@@ -211,7 +210,7 @@ class MainScene extends Phaser.Scene{
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
 
-        this.timetick = 0
+        this.lastspawntime = -2000
 
         this.shop = new Shop("Math CND")
         this.registry.set('shop', this.shop)
@@ -303,20 +302,24 @@ class MainScene extends Phaser.Scene{
             callback: () => {
                 var rando = Math.random()
                 if (rando < 0.3){
-                    this.time.addEvent({
-                        delay:9000,
-                        callback:() => {
-                            this.customers[0].destroy()
+                    console.log("this.time", this.time.now)
+                    if (this.time.now - this.lastspawntime > 2000){
+                        this.lastspawntime = this.time.now
+                        this.time.addEvent({
+                            delay:12000,
+                            callback:() => {
+                                this.customers[0].destroy()
 
-                            this.customers.shift()
-                            this.customers.forEach((custo)=>{
-                                custo.resumeFollow()
-                            })}
-                    })
-                    var newfollower = this.add.follower(this.path, 775,525,'char').startFollow({duration:7000})
-                    this.customers.push(newfollower)
-                    this.physics.world.enable(this.customers[this.customers.length - 1])
-                    this.customergroup.add(this.customers[this.customers.length - 1])
+                                this.customers.shift()
+                                this.customers.forEach((custo)=>{
+                                    custo.resumeFollow()
+                                })}
+                        })
+                        var newfollower = this.add.follower(this.path, 775,525,'char').startFollow({duration:7000})
+                        this.customers.push(newfollower)
+                        this.physics.world.enable(this.customers[this.customers.length - 1])
+                        this.customergroup.add(this.customers[this.customers.length - 1])
+                    }
                 }},
             callbackScope: this,
             loop: true
