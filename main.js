@@ -178,7 +178,7 @@ class MainScene extends Phaser.Scene{
     preload (){
         this.load.image("repeating-background", "assets/floor_tile.png");
         this.load.image("cashier", "assets/cashier.png");
-        this.load.image("customer", "assets/customer.png");
+        //this.load.image("customer", "assets/player_idle.png");
         this.load.image("floor_tile", "assets/tile024.png");
         this.load.image("hcounter", "assets/hcounter.png");
         this.load.image("mcounter", "assets/mcounter.png");
@@ -190,8 +190,15 @@ class MainScene extends Phaser.Scene{
         this.load.image('coffee_icon', "assets/coffee.png");
         this.load.image('donut_icon', "assets/donut.png");
         this.load.image('patty_icon', "assets/beef_patty.png");
+        this.load.image('tea_icon', 'assets/tea.png');
+        this.load.image('bagel_icon', 'assets/bagel.png');
+        this.load.image('samosa_icon', 'assets/samosa.png');
 
-        this.load.image('char', "assets/customer.png")
+        this.load.image('char', "assets/player_idle.png");
+        this.load.image('walk1', 'assets/player_walk1.png');
+        this.load.image('walk2', 'assets/player_walk2.png');
+
+        this.load.audio('bgmusic', 'assets/happy_adveture.mp3')
 
         this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
@@ -223,22 +230,42 @@ class MainScene extends Phaser.Scene{
         this.graphics = this.add.graphics()
 
         this.path = this.add.path(775,525);
-        this.path.lineTo(550,525)
-        this.path.lineTo(550, 200)
+        this.path.lineTo(500,525)
+        this.path.lineTo(500, 200)
         this.path.lineTo(225,200)
         this.path.lineTo(225,550)
 
-        this.graphics.lineStyle(3, 0xffffff, 1);
-        this.path.draw(this.graphics);
+        this.anims.create({
+            key: 'walking',
+            frames: [
+                { key: 'walk1'},
+                { key: 'walk2'},
+            ],
+            frameRate: 4,
+            repeat: -1
+        })
+
+        //this.graphics.lineStyle(3, 0xffffff, 1);
+        //this.path.draw(this.graphics);
 
         this.customers = []
 
+        var music = this.sound.add('bgmusic', {loop:true});
+
+        music.play();
+
         this.foods = [
-            this.add.existing(new Food(this,75,200,'patty_icon', 'beef patty', 1, 1.25)).setInteractive(),
+
+            this.add.existing(new Food(this,725,250,'coffee_icon', 'coffee', 1, 1.25)).setInteractive(),
+            this.add.existing(new Food(this,725,350,'tea_icon', 'tea', 1, 10)).setInteractive(),
+
+            this.add.existing(new Food(this,200,75,'patty_icon', 'beef patty', 1, 1.25)).setInteractive(),
+            this.add.existing(new Food(this,325,75,'samosa_icon', 'samosa', 1, 10)).setInteractive(),
+            this.add.existing(new Food(this,450,75,'donut_icon', 'donut', 1, 1.25)).setInteractive(),
+            this.add.existing(new Food(this,575,75,'bagel_icon', 'bagel', 1, 10)).setInteractive(),
+
             this.add.existing(new Food(this,75,250,'apple_icon', 'apple', 1, 1.25)).setInteractive(),
-            this.add.existing(new Food(this,75,300,'coffee_icon', 'coffee', 1, 1.25)).setInteractive(),
-            this.add.existing(new Food(this,75,350,'donut_icon', 'donut', 1, 1.25)).setInteractive(),
-            this.add.existing(new Food(this,75,400,'apple_icon', 'organic apple', 1, 10)).setInteractive(),
+            this.add.existing(new Food(this,75,350,'apple_icon', 'organic apple', 1, 10)).setInteractive(),
         ]
 
         this.shop.foods = this.foods
@@ -308,8 +335,11 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: true
+            debug: false
         }
+    },
+    audio: {
+        disableWebAudio: true
     },
     backgroundColor: "#222222",
     parent:"game-continer",
