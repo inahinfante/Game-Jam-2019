@@ -12,13 +12,7 @@ class Shop {
     }
 }
 
-// var cnd = new Shop('Math CnD')
-// cnd.lstItems.push(coffee, tea, donut, soup)
-
-
-/* tobuylstfunc takes in shopname, which is a Shop class. 
-It produces an array of min 1 and max (shopname.lstItems.length) 
-items from shopname.lstItems*/
+/* tobuylstfunc takes in shopname, which is a Shop class. It produces an array of min 1 and max (shopname.lstItems.length) items from shopname.lstItems*/
 function tobuylstfunc(shopname) {
     var i;
     var maxnum = getRandomInt(shopname.lstItems.length);
@@ -32,30 +26,12 @@ function tobuylstfunc(shopname) {
     return lst
 }
 
-/* creates class Person, with attributes preference and tobuylst. 
-preference is an array of four digits, from 0 - 5. 
-tobuylst is an array from tobuylstfun() */
-
-// Constructing a Person object:
-// Inside of a Scene (likely MenuScene.create()), instantiate as follows:
-// p1 = new Person(this.add.image(X,Y,'IMGNAME').setOrigin(0).setInteractive())
-// This way, the Person object holds a pointer to an image in the scene.
-class Person {
-    constructor(charimg) {
-        this.preference = [getRandomInt(6), getRandomInt(6), getRandomInt(6), getRandomInt(6)];
-        this.charimg = charimg
-    }
-}
-
-var p1 = new Person();
-
 class MenuScene extends Phaser.Scene {
 
     constructor ()
     {
         super({
             key: 'MenuScene',
-            //active: true,
         });
     }
 
@@ -71,10 +47,6 @@ class MenuScene extends Phaser.Scene {
 
         this.load.image('exitbutton', 'assets/redboxCross.png');
         this.scene.setVisible('exitbutton')
-
-        /* placeholders */
-        this.load.image('test', 'assets/test.png');
-        this.scene.setVisible('test')
     }
 
     create (data)
@@ -115,8 +87,8 @@ class MenuScene extends Phaser.Scene {
         this.add.text(475, 250, purchprice, {fontSize:'25px', fill:'#000000'})
         this.add.text(425, 300, sellprice, {fontSize:'25px', fill:'#000000'})
 
-        this.add.text(400, 350, '12', {fontSize:'25px', fill:'#000000'})
-        this.add.text(400, 400, 'Yes (+1)', {fontSize:'25px', fill:'#000000'})
+        this.add.text(400, 375, '12', {fontSize:'25px', fill:'#000000'})
+        this.add.text(400, 425, 'Yes (+1)', {fontSize:'25px', fill:'#000000'})
     }
 
 }
@@ -125,6 +97,8 @@ class MenuScene extends Phaser.Scene {
 class testperson extends Phaser.GameObjects.Image{
     constructor(scene, x, y, texture){
         super(scene, x, y, texture)
+        this.preference = [getRandomInt(6), getRandomInt(6), getRandomInt(6), getRandomInt(6)];
+        this.tobuylst = tobuylstfunc();
     }
     movedown(){
         this.y += 1
@@ -144,10 +118,6 @@ class Food extends Phaser.GameObjects.Image {
     }
 }
 
-// var coffee = new Food('coffee', 1, 1.25)
-// var tea = new Food('tea', 0.95, 1.15)
-// var donut = new Food('donut', 1.25, 1.75)
-// var soup = new Food('soup', 4, 5)
 
 class MainScene extends Phaser.Scene{
     constructor(){
@@ -176,7 +146,6 @@ class MainScene extends Phaser.Scene{
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
 
-        
         this.add.image(400, 100, "hcounter");
         this.add.image(75, 325, "lvcounter");
         this.add.image(725, 300, "rvcounter");
@@ -189,8 +158,6 @@ class MainScene extends Phaser.Scene{
         this.add.image(75, 20, "coin")
         this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
 
-        // const apple = this.add.image(75,250,'apple_icon').setInteractive();
-
         this.apple = this.add.existing(new Food(this,75,250,'apple_icon', 'apple', 1, 1.25)).setInteractive();
 
         this.apple.on('pointerup', () => {
@@ -198,28 +165,8 @@ class MainScene extends Phaser.Scene{
             this.scene.launch('MenuScene',this.apple)
             this.scene.bringToTop('MenuScene');
         })
-        // const apple = this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive();
-        //var testp = new testperson(this.add.image(0,0,'apple_icon').setOrigin(0).setInteractive());
-        // pass in `this`, which is the scene object.
-        // testp = new testperson(this,0,0,'apple_icon').setOrigin(0).setInteractive();
-        // this.testp = this.add.existing(testp);
-        //this.testp = this.add.existing(new testperson(this,0,0,'apple_icon').setOrigin(0).setInteractive());
-        
-        //this.add.existing(testp);
-
-        // apple.on('pointerup', () => {
-        //     console.log("pooopy")
-
-        // })
-
-        /*
-        this.input.keyboard.on('keyup_S', () => {
-            testp.movedown()
-        })
-        */
 
         this.input.on('pointerup', (pointer) => {
-            //this.scene.switch('MainScene','MenuScene')
             this.scene.pause('MainScene')
             this.scene.wake('MenuScene')
             this.scene.bringToTop('MenuScene');
