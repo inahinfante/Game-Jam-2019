@@ -8,7 +8,7 @@ class Shop {
     constructor(name) {
         this.name = name;
         this.lstItems = []
-        this.money = 0;
+        this.money = 1500;
     }
 }
 
@@ -57,6 +57,7 @@ class MenuScene extends Phaser.Scene {
             this.scene.pause('MenuScene')
             this.scene.wake('MainScene')
             this.scene.bringToTop('MainScene');
+            this.scene.bringToTop('MoneyUI');
         })
         
         console.log('in create in menu')
@@ -73,13 +74,13 @@ class MenuScene extends Phaser.Scene {
             this.scene.pause('MenuScene')
             this.scene.wake('MainScene')
             this.scene.bringToTop('MainScene');
+            this.scene.bringToTop('MoneyUI');
         })
 
         /* placeholders */
         var itemName = this.FoodObj.name;
         var purchprice = this.FoodObj.purchase;
         var sellprice = this.FoodObj.sell;
-        var stockamnt = 10;
         var buymore = 'derp';
 
         this.add.text(250, 200, itemName, {fontSize:'35px', fill:'#000000'})
@@ -91,16 +92,15 @@ class MenuScene extends Phaser.Scene {
         this.add.text(475, 300, sellprice, {fontSize:'25px', fill:'#000000'}).setAlign('right')
 
         this.add.text(350, 350, "Stock: ", {fontSize:'25px', fill:'#000000'}).setAlign('right')
-        this.stockview = this.add.text(475, 350, stockamnt, {fontSize:'25px', fill:'#000000'}).setAlign('right')
+        this.stockview = this.add.text(475, 350, this.FoodObj.stock, {fontSize:'25px', fill:'#000000'}).setAlign('right')
 
         this.add.text(350, 400, "Buy more? ", {fontSize:'25px', fill:'#000000'}).setAlign('right')
         var buybutt = this.add.text(475, 400, 'Yes (+1)', {fontSize:'25px', fill:'#000000'})
         buybutt.setAlign('right').setInteractive().setBackgroundColor('green')
 
-
         buybutt.on('pointerup', () => {
-            stockamnt += 1
-            this.stockview.setText(stockamnt);
+            this.FoodObj.stock += 1
+            this.stockview.setText(this.FoodObj.stock);
         })
     }
 
@@ -128,9 +128,29 @@ class Food extends Phaser.GameObjects.Image {
         this.name = name;
         this.purchase = purchase;
         this.sell = sell;
+        this.stock = 0;
     }
 }
 
+class MoneyUI extends Phaser.Scene{
+    constructor(){
+        super({
+            key: 'MoneyUI',
+            active: true,
+        })
+    }
+
+    preload(){
+        this.load.image('coin', "assets/coin.png");
+        console.log('preloading moneyui')
+    }
+
+    create(){
+        this.add.image(75, 20, "coin")
+        this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
+    }
+
+}
 
 class MainScene extends Phaser.Scene{
     constructor(){
@@ -146,7 +166,6 @@ class MainScene extends Phaser.Scene{
         this.load.image("plant", "assets/plant.png");
         this.load.image("lvcounter", "assets/lvcounter.png");
         this.load.image("rvcounter", "assets/rvcounter.png");
-        this.load.image('coin', "assets/coin.png");
 
         this.load.image('apple_icon', "assets/apple.png");
         this.load.image('coffee_icon', "assets/coffee.png");
@@ -155,6 +174,7 @@ class MainScene extends Phaser.Scene{
 
         this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
+        this.scene.bringToTop('MoneyUI')
     }
 
     create ()
@@ -172,8 +192,6 @@ class MainScene extends Phaser.Scene{
         this.add.image(725, 100, "plant");
         this.add.image(75, 550, "cashier");
         this.add.image(400, 550, "cashier");
-        this.add.image(75, 20, "coin")
-        this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
 
         this.foods = [
             this.add.existing(new Food(this,75,200,'patty_icon', 'beef patty', 1, 1.25)).setInteractive(),
@@ -211,7 +229,7 @@ var config = {
     height: 600,
     backgroundColor: "#222222",
     parent:"game-continer",
-    scene: [MainScene, MenuScene]
+    scene: [MainScene, MenuScene, MoneyUI]
 };
 
 var game = new Phaser.Game(config);
