@@ -27,7 +27,6 @@ function tobuylstfunc(shopname) {
 }
 
 class MenuScene extends Phaser.Scene {
-
     constructor ()
     {
         super({
@@ -119,34 +118,7 @@ class testperson extends Phaser.GameObjects.Image{
         this.tobuylst = ['a'];
         this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
     }
-    update(time, delta){
-        this.testperson_SPEED = 1/10000;
-
-    // move the t point along the path, 0 is the start and 0 is the end
-       this.follower.t += testperson_SPEED * delta;
-    
-    // get the new x and y coordinates in vec
-        path.getPoint(this.follower.t, this.follower.vec);
-            
-    // update testperson x and y to the newly obtained x and y
-        this.setPosition(this.follower.vec.x, this.follower.vec.y);
- 
-    // if we have reached the end of the path, remove the testperson
-        if (this.follower.t >= 1) {
-            this.setActive(false);
-            this.setVisible(false);
-        }
-    }
-
-    startOnPath(){
-    // set the t parameter at the start of the path
-        this.follower.t = 0;
-            
-    // get x and y of the given t point            
-        this.path.getPoint(this.follower.t, this.follower.vec);
-            
-    // set the x and y of our enemy to the received from the previous step
-        this.setPosition(this.follower.vec.x, this.follower.vec.y);
+    update(){
     }
 }
 
@@ -161,13 +133,12 @@ class Food extends Phaser.GameObjects.Image {
     }
 }
 
-
-
 class MainScene extends Phaser.Scene{
     constructor(){
         super('MainScene');
     }
     preload (){
+        this.load.image("repeating-background", "assets/floor_tile.png");
         this.load.image("cashier", "assets/cashier.png");
         this.load.image("customer", "assets/customer.png");
         this.load.image("floor_tile", "assets/tile024.png");
@@ -178,30 +149,27 @@ class MainScene extends Phaser.Scene{
         this.load.image("rvcounter", "assets/rvcounter.png");
         this.load.image('apple_icon', "assets/food.png");
         this.load.image('coin', "assets/coin.png");
-        this.load.image('char', 'assets/customer.png');
 
         this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
     }
 
-
-    create (){
+    create ()
+    {
         const {width, height} = this.sys.game.config;
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
 
-        platforms = this.physics.add.staticGroup();
-        platforms.create(400, 100, "hcounter");
-        platforms.create(75, 325, "lvcounter");
-        platforms.create(725, 325, "rvcounter");
-        platforms.create(400, 410, "mcounter");
-        platforms.create(400, 300, "mcounter");
-        platforms.create(75, 550, "cashier");
-        platforms.create(400, 550, "cashier");
-
+        this.add.image(400, 100, "hcounter");
+        this.add.image(75, 325, "lvcounter");
+        this.add.image(725, 300, "rvcounter");
+        this.add.image(400, 410, "mcounter");
+        this.add.image(400, 300, "mcounter");
         this.add.image(75, 100, "plant");
         this.add.image(725, 100, "plant");
-        this.add.image(75, 20, "coin");
+        this.add.image(75, 550, "cashier");
+        this.add.image(400, 550, "cashier");
+        this.add.image(75, 20, "coin")
         this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
 
         this.apple = this.add.existing(new Food(this,75,250,'apple_icon', 'apple', 1, 1.25)).setInteractive();
@@ -221,10 +189,6 @@ class MainScene extends Phaser.Scene{
         this.player = this.physics.add.sprite(775, 525, 'char');
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        /* bounce is not needed and players need to leave the world later*/
-        /*player.setBounce(0);
-        player.setCollideWorldBounds(true);*/
-
         this.physics.add.collider(this.player, platforms);
 
         this.graphics = this.add.graphics();
@@ -236,28 +200,12 @@ class MainScene extends Phaser.Scene{
         this.path.lineTo(225, 575);
 
         this.graphics.lineStyle(3, 0xffffff, 1);
+
         // visualize the path
         this.path.draw(this.graphics);
-
-        this.enemies = this.add.group({ classType: testperson, runChildUpdate: true });
-        this.nexttestperson = 0;
     }
 
-    update (time, delta){
-    // if its time for the next testperson
-        if (time > this.nexttestperson) {
-            this.testperson = this.enemies.get();
-            
-            if (this.testperson) {
-                this.testperson.setActive(true);
-                this.testperson.setVisible(true);
-            
-            // place the testperson at the start of the path
-                this.testperson.startOnPath();
-            
-                this.nexttestperson = time + 2000;
-            }
-        }
+    update (){
     }
 }
 
@@ -268,12 +216,15 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            gravity: { y: 300 },
+            debug: false
         }
     },
     backgroundColor: "#222222",
     parent:"game-continer",
     scene: [MainScene, MenuScene]
+
+
 };
 
 var game = new Phaser.Game(config);
