@@ -7,7 +7,7 @@ function getRandomInt(max) {
 class Shop {
     constructor(name) {
         this.name = name;
-        this.lstItems = []
+        this.inventory = []
         this.money = 1500;
     }
 }
@@ -100,6 +100,15 @@ class MenuScene extends Phaser.Scene {
 
         buybutt.on('pointerup', () => {
             this.FoodObj.stock += 1
+
+            // Make a local copy of shop from the registry to
+            // work with. Subtract the purchase price of the food
+            // then update the registry to trigger an update in 
+            // MoneyUI
+            this.shop = this.registry.get('shop')
+            this.shop.money -= this.FoodObj.purchase
+            this.registry.set('shop', this.shop)
+
             this.stockview.setText(this.FoodObj.stock);
         })
     }
@@ -147,8 +156,18 @@ class MoneyUI extends Phaser.Scene{
 
     create(){
         this.add.image(75, 20, "coin")
-        this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
+        this.moneyview = this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
+
+        // When the registry sees change in shop object,
+        // reset the text in moneyview
+        this.registry.events.on('changedata', (parent,key,data) => {
+            if (key === 'shop'){
+                this.moneyview.setText(data.money)
+            }
+        })
     }
+
+
 
 }
 
@@ -183,6 +202,9 @@ class MainScene extends Phaser.Scene{
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
 
+        this.shop = new Shop("Math CND")
+        this.registry.set('shop', this.shop)
+
         this.add.image(400, 100, "hcounter");
         this.add.image(75, 325, "lvcounter");
         this.add.image(725, 300, "rvcounter");
@@ -200,6 +222,8 @@ class MainScene extends Phaser.Scene{
             this.add.existing(new Food(this,75,350,'donut_icon', 'donut', 1, 1.25)).setInteractive(),
             this.add.existing(new Food(this,75,400,'apple_icon', 'organic apple', 1, 10)).setInteractive(),
         ]
+
+        this.shop.foods = this.foods
 
         this.input.on('pointerup', (pointer) => {
             // Check if any of the foods were clicked
