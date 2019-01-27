@@ -132,13 +132,14 @@ class Food extends Phaser.GameObjects.Image {
     }
 }
 
+var platforms;
+var cursors;
 
 class MainScene extends Phaser.Scene{
     constructor(){
         super('MainScene');
     }
     preload (){
-        this.load.image("repeating-background", "assets/floor_tile.png");
         this.load.image("cashier", "assets/cashier.png");
         this.load.image("customer", "assets/customer.png");
         this.load.image("floor_tile", "assets/tile024.png");
@@ -149,27 +150,30 @@ class MainScene extends Phaser.Scene{
         this.load.image("rvcounter", "assets/rvcounter.png");
         this.load.image('apple_icon', "assets/food.png");
         this.load.image('coin', "assets/coin.png");
+        this.load.image('char', 'assets/customer.png');
 
         this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
     }
 
-    create ()
-    {
+
+    create (){
         const {width, height} = this.sys.game.config;
         const bg = this.add.tileSprite(0, 0, width, height, "floor_tile")
         bg.setOrigin(0, 0)
 
-        this.add.image(400, 100, "hcounter");
-        this.add.image(75, 325, "lvcounter");
-        this.add.image(725, 300, "rvcounter");
-        this.add.image(400, 410, "mcounter");
-        this.add.image(400, 300, "mcounter");
+        platforms = this.physics.add.staticGroup();
+        platforms.create(400, 100, "hcounter");
+        platforms.create(75, 325, "lvcounter");
+        platforms.create(725, 325, "rvcounter");
+        platforms.create(400, 410, "mcounter");
+        platforms.create(400, 300, "mcounter");
+        platforms.create(75, 550, "cashier");
+        platforms.create(400, 550, "cashier");
+
         this.add.image(75, 100, "plant");
         this.add.image(725, 100, "plant");
-        this.add.image(75, 550, "cashier");
-        this.add.image(400, 550, "cashier");
-        this.add.image(75, 20, "coin")
+        this.add.image(75, 20, "coin");
         this.add.text(73, 12, "1500", {fontSize:'17px', fill:'#997a00'});
 
         this.apple = this.add.existing(new Food(this,75,250,'apple_icon', 'apple', 1, 1.25)).setInteractive();
@@ -186,10 +190,31 @@ class MainScene extends Phaser.Scene{
             this.scene.bringToTop('MenuScene');
         })
 
+        this.player = this.physics.add.sprite(775, 525, 'char');
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        /* bounce is not needed and players need to leave the world later*/
+        /*player.setBounce(0);
+        player.setCollideWorldBounds(true);*/
+
+        this.physics.add.collider(this.player, platforms);
     }
 
     update (){
-        
+        if (this.cursors.left.isDown){
+            this.player.setVelocityX(-160);
+        }
+
+        else if (this.cursors.right.isDown){
+            this.player.setVelocityX(160);
+        }
+        else {
+            this.player.setVelocityX(0);
+        }
+
+        if (this.cursors.up.isDown && this.player.body.touching.down){
+            this.player.setVelocityY(-330);
+        }     
     }
 }
 
@@ -197,6 +222,12 @@ var config = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: true
+        }
+    },
     backgroundColor: "#222222",
     parent:"game-continer",
     scene: [MainScene, MenuScene]
