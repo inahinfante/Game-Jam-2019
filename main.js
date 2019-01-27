@@ -198,6 +198,8 @@ class MainScene extends Phaser.Scene{
         this.load.image('walk1', 'assets/player_walk1.png');
         this.load.image('walk2', 'assets/player_walk2.png');
 
+        this.load.audio('bgmusic', 'assets/happy_adveture.mp3')
+
         this.scene.pause('MenuScene')
         this.scene.bringToTop('MainScene')
         this.scene.bringToTop('MoneyUI')
@@ -254,6 +256,9 @@ class MainScene extends Phaser.Scene{
 
         this.physics.world.enable(this.player);
 
+        var music = this.sound.add('bgmusic', {loop:true});
+
+        music.play();
 
         this.foods = [
 
@@ -267,8 +272,6 @@ class MainScene extends Phaser.Scene{
 
             this.add.existing(new Food(this,75,250,'apple_icon', 'apple', 1, 1.25)).setInteractive(),
             this.add.existing(new Food(this,75,350,'apple_icon', 'organic apple', 1, 10)).setInteractive(),
-
-
         ]
 
         this.shop.foods = this.foods
@@ -305,6 +308,9 @@ var config = {
         arcade: {
             debug: false
         }
+    },
+    audio: {
+        disableWebAudio: true
     },
     backgroundColor: "#222222",
     parent:"game-continer",
