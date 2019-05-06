@@ -1,89 +1,45 @@
 This is a WIP of a README file. Template is by **Billie Thompson** - [PurpleBooth](https://github.com/PurpleBooth).
 
-# Project Title
+# Coffee N' Donut Shop Simulator
 
-One Paragraph of project description goes here
+You are now the manager of a small coffee n' donut shop! Stock up your inventory, make sure to keep your customers' approval high, and expand your shop to be the greatest CnD shop on campus!
+
+This was a project built during the 2019 Game Jam at the University of Waterloo.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
 ## Running the tests
-
-Explain how to run the automated tests for this system
 
 ### Break down into end to end tests
 
-Explain what these tests test and why
-
-```
-Give an example
-```
-
 ### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
-
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Phaser 3.15.1](https://phaser.io/phaser3) - an open-source desktop and mobile HTML5 game framework
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
 ## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Inah Infante** - [inahinfante](https://github.com/inahinfante)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/inahinfante/Coffee-N-Donut-Shop-Simulator/graphs/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+With the exception of the food graphics (eg apple, coffee), all graphic assets of this game have been released in the public domain under a [CC0 license](https://creativecommons.org/share-your-work/public-domain/cc0/). These assets are:
+
+* Images have been created by [Kenney](https://kenney.nl/), and are part of his "Roguelike Indoor" and "Platform Character 1" sets. Most have been scaled up and some have minor edits.
+
+* Background music is called ["Happy Adventure (Loop)"](https://opengameart.org/content/happy-adventure-loop), created by Rick Hoppmann 
